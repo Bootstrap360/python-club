@@ -33,10 +33,44 @@ print_header("Looping over functions")
 for func in (func1, func2):
     func()
 
+# %%
+
+# This means that functions can also return other functions
+
+
+def generate_func():
+    def inner():
+        print("Inner")
+
+    return inner
+
+
+func = generate_func()
+print_header("Calling generated function")
+func()
+
+# %%
+# Understanding variable scope is also important.
+# The inner remembers the variables `generated_func_arg` and `generated_func_variable`
+# they can be used later
+
+
+def generate_func(generated_func_arg):
+    generated_func_variable = "var"
+
+    def inner():
+        print("Inner", generated_func_arg, generated_func_variable)
+
+    return inner
+
+
+func = generate_func("gen_argument")
+print_header("Calling generated function with arguments and local variables")
+func()
+
+# %%
 
 # lets pretend you have two functions as follows.
-
-
 def fast_func():
     time.sleep(0.1)
 
@@ -73,6 +107,7 @@ print_header("Calling fast and slow func:")
 fast_func()
 slow_func()
 
+# %%
 # The above code has redundant timing code which is really annoying...
 # How can we refactor this so that we do not need to repeat the timing blocks?
 # What if we passed in fast_func and slow_func as an argument into a timer function?
@@ -100,6 +135,8 @@ def timeit(func):
 timeit(fast_func)
 timeit(slow_func)
 
+# %%
+
 # what if we do not want to call timeit immediately, but want to use it later?
 # What if we assign it to a new function to be called later, can we just set it to a variable?
 
@@ -126,12 +163,15 @@ timed_fast_func = timeit_wrapper(fast_func)
 print_header("Calling using timeit_wrapper")
 timed_fast_func()
 
+# %%
+
 # if we never need to use the original fast_func without the timer, we can overwrite the variable
 
 fast_func = timeit_wrapper(fast_func)
 print_header("Calling using timeit_wrapper")
 fast_func()
 
+# %%
 # The above code is ugly, I wish there was a prettier way to write `fast_func = timeit_wrapper(fast_func)`
 # Enter decorator. You use the @<decorator function name> cleanly wrap the function definition. This is
 # easier to read later.
@@ -145,8 +185,9 @@ def fast_func():
 print_header("Calling using decorator")
 fast_func()
 
+# %%
 
-# what if we need to pass in arguments into fast_func?
+# What if we need to pass in arguments into fast_func?
 
 
 def timeit_wrapper(func):
@@ -172,6 +213,7 @@ def fast_func(arg):
 print_header("Calling using decorator with arguments")
 fast_func(4)
 
+# %%
 
 # What if we do not know how many arguments func is going to take when we wrap it?
 # Slurp and splat with *args and **kwargs
@@ -199,6 +241,8 @@ def fast_func(arg1, arg2, var=None):
 
 print_header("Calling using decorator with arbitrary args")
 fast_func(5, 1, var="apple")
+
+# %%
 
 # if we want to get fancy, we can format the input arguments
 
@@ -229,8 +273,9 @@ print_header("Calling using decorator with arbitrary args and fancy printing")
 fast_func(5, 1, var="apple")
 
 
-# what if we want to pass arguments into the timer?
+# %%
 
+# What if we want to pass arguments into the timer to call it `count` times?
 
 def timeit_wrapper(count):
 
